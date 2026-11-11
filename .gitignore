@@ -9,3 +9,6 @@ desktop.ini
 node_modules/
 .vscode/
 .idea/
+
+# Unoptimized source photos
+_originals/
