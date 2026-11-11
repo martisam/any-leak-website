@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: HTML validation
+        run: npm run lint:html
+
+      - name: CSS lint
+        run: npm run lint:css
+
+      - name: JS lint
+        run: npm run lint:js
+
+      - name: Image budget
+        run: npm run budget
+
+      - name: Link and anchor check
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --config lychee.toml --no-progress index.html
+          fail: true
+
+      - name: Accessibility scan (report only)
+        continue-on-error: true
+        run: |
+          npm run serve &
+          npx --yes wait-on http://localhost:8000
+          npx --yes pa11y-ci http://localhost:8000
+
+      - name: Package site preview
+        run: |
+          mkdir -p _site
+          cp -r index.html css js images _site/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-preview
+          path: _site
+          retention-days: 7

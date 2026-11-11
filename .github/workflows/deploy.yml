@@ -1,0 +1,58 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: checks
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/configure-pages@v5
+
+      - name: Stage publishable files
+        run: |
+          mkdir -p _site
+          cp -r index.html css js images _site/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  smoke-test:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Live site responds with expected content
+        run: |
+          url="https://martisam.github.io/any-leak-website/"
+          for i in 1 2 3 4 5; do
+            code=$(curl -s -o page.html -w "%{http_code}" "$url") && [ "$code" = "200" ] && break
+            sleep 10
+          done
+          test "$code" = "200"
+          grep -q "Leaks End Here" page.html
+          curl -sfI "${url}css/style.css" > /dev/null
+          curl -sfI "${url}js/main.js" > /dev/null

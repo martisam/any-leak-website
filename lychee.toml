@@ -1,0 +1,7 @@
+# Link checker config. Local files and anchors must resolve; external URLs retried, then reported.
+no_progress = true
+max_retries = 3
+timeout = 20
+accept = ["200..=299", "403", "429"]
+include_fragments = true
+exclude = ["^https://fonts\\.(googleapis|gstatic)\\.com"]
