@@ -3,7 +3,7 @@
 A fast, single-page marketing site for a local plumbing company, built as a
 reusable template for home-service businesses (plumbing, HVAC, electrical, etc.).
 
-**Live demo:** _add your GitHub Pages URL here after deploying_
+**Live demo:** https://martisam.github.io/any-leak-website/
 
 ## Highlights
 
@@ -36,8 +36,20 @@ Then open http://localhost:8000
 
 ## Deploy to GitHub Pages
 
-Once the repo is on GitHub, enable Pages from the `main` branch (root folder).
-The site is served as-is; there is no build step.
+Pages is deployed by GitHub Actions (Settings > Pages > Source: GitHub Actions).
+The site is served as-is; there is no build step. Merging to `main` publishes.
+
+## Contribute / CI/CD
+
+1. Branch off `main`: `content/<topic>`, `feat/<topic>`, or `fix/<topic>`
+2. Preview locally: `npm install` then `npm run serve` (http://localhost:8000)
+3. Run checks: `npm run lint` (HTML, CSS, JS, image budget)
+4. Commit with a prefix (`content:`, `feat:`, `fix:`, `chore:`), push, open a PR
+5. CI (`.github/workflows/ci.yml`) validates HTML/CSS/JS, images, and links, and
+   uploads a `site-preview` artifact
+6. Merge to `main`: `deploy.yml` reruns checks, publishes, and smoke-tests the live URL
+
+Rollback: revert the merge commit on `main`; it redeploys automatically.
 
 ## Reuse as a template
 

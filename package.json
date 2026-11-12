@@ -1,0 +1,24 @@
+{
+  "name": "any-leak-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Any Leak Plumbing Inc demo site (static, tooling is for CI only)",
+  "scripts": {
+    "serve": "http-server . -p 8000 -c-1",
+    "lint:html": "html-validate index.html",
+    "lint:css": "stylelint \"css/**/*.css\"",
+    "lint:js": "eslint js",
+    "budget": "node scripts/image-budget.mjs",
+    "lint": "npm run lint:html && npm run lint:css && npm run lint:js && npm run budget"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0",
+    "html-validate": "^9.0.0",
+    "http-server": "^14.1.1",
+    "stylelint": "^16.0.0",
+    "stylelint-config-standard": "^36.0.0"
+  }
+}
